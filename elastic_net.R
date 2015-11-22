@@ -8,6 +8,13 @@ source("GetDataFromId.R")
 drv <- dbDriver("PostgreSQL")
 con <- dbConnect(drv, host = 'localhost', dbname = 'lotterydata')
 
+model_id <- 1
+sql.text <- paste("select * from models where id = ", as.character(model_id), sep = '')
+res <- dbSendQuery(con,sql.text)
+model.pars <- fetch(res,1)
+dbClearResult(res)
+
+results <- list()
 
 for(i in 1:12){
   temp <- GetDataFromID(i, "2015-07-31")
@@ -29,6 +36,7 @@ for(i in 1:12){
                     data = training[,-ncol(training)], method = "glmnet",
                     trControl = trainControl(method = "cv", number = 5)
                     )
+  results[[i]] <- modelfit
   
   predictions <- predict(modelfit,newdata = testing)
   predictions <- pars$granularity*round(predictions/pars$granularity)
@@ -38,10 +46,12 @@ for(i in 1:12){
   print(rmse)
   sql.text <- paste("insert into model_results values(",
                     as.character(i), ", ",
-                    "'elastic net', ",
+                    as.character(model_id), ", ",
                     as.character(rmse), ")",
                     sep = '')
   dbSendQuery(con,sql.text)
 }
 
 dbDisconnect(con)
+
+saveRDS(results,model.pars$results_file)
