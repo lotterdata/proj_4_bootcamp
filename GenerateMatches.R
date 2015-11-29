@@ -1,6 +1,5 @@
-library(itertools)
+
 library(iterpc)
-library(iterators)
 
 GenerateMatches <- function(x,N,m){
   k <- length(x)
@@ -16,20 +15,5 @@ GenerateMatches <- function(x,N,m){
         answer[counter,] <- sort(c(matching[i,],not.matching[j,]))
         counter <- counter + 1
       }
-#   answer <- data.frame(answer)
-#   cn <- vector(mode = "character", length = k)
-#   for(i in 1:k){
-#     cn[i] <- paste('n',as.character(i),sep = '')
-#   }
-#   colnames(answer) <- cn
-# 
-#   for(i in 1:N){
-#     ft = paste('f', as.character(i), sep = '')
-#     answer[[ft]] = apply(answer[,1:k],1,function(x) SetFlag(x,i))
-#   }
-#   
-#   answer$gap.sd <- apply(answer[,1:k],1,gap.sd)
-#   answer$drawsum <- apply(answer[,1:k],1,sum)
-#   answer$range <- answer[,k] - answer[,1]  
    return(answer) 
 }
